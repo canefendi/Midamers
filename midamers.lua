@@ -1,4 +1,4 @@
--- // Mitamers Software
+-- // Mitamers Software - Stabil Fly
 print("Mitamers Software Yükleniyor...")
 
 local Players = game:GetService("Players")
@@ -27,31 +27,44 @@ Watermark.Font = Enum.Font.GothamBold
 Watermark.Parent = ScreenGui
 
 local flying = false
-local flySpeed = 70
+local flySpeed = 60
+local bv, bg
 
 local function toggleFly()
     flying = not flying
     if flying then
         humanoid.PlatformStand = true
+        
+        bv = Instance.new("BodyVelocity")
+        bv.MaxForce = Vector3.new(1e5, 1e5, 1e5)
+        bv.Parent = root
+        
+        bg = Instance.new("BodyGyro")
+        bg.MaxTorque = Vector3.new(1e5, 1e5, 1e5)
+        bg.P = 12500
+        bg.Parent = root
+        
         spawn(function()
             while flying and root and root.Parent do
-                local cam = workspace.CurrentCamera.CFrame
+                local cam = workspace.CurrentCamera
                 local dir = Vector3.new(0,0,0)
                 
-                if UserInputService:IsKeyDown(Enum.KeyCode.W) then dir += cam.LookVector end
-                if UserInputService:IsKeyDown(Enum.KeyCode.S) then dir -= cam.LookVector end
-                if UserInputService:IsKeyDown(Enum.KeyCode.A) then dir -= cam.RightVector end
-                if UserInputService:IsKeyDown(Enum.KeyCode.D) then dir += cam.RightVector end
+                if UserInputService:IsKeyDown(Enum.KeyCode.W) then dir += cam.CFrame.LookVector end
+                if UserInputService:IsKeyDown(Enum.KeyCode.S) then dir -= cam.CFrame.LookVector end
+                if UserInputService:IsKeyDown(Enum.KeyCode.A) then dir -= cam.CFrame.RightVector end
+                if UserInputService:IsKeyDown(Enum.KeyCode.D) then dir += cam.CFrame.RightVector end
                 if UserInputService:IsKeyDown(Enum.KeyCode.Space) then dir += Vector3.new(0,1,0) end
                 if UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) then dir -= Vector3.new(0,1,0) end
                 
-                root.Velocity = dir * flySpeed
+                bv.Velocity = dir * flySpeed
+                bg.CFrame = cam.CFrame
                 RunService.Heartbeat:Wait()
             end
         end)
     else
         humanoid.PlatformStand = false
-        root.Velocity = Vector3.new(0,0,0)
+        if bv then bv:Destroy() end
+        if bg then bg:Destroy() end
     end
 end
 
@@ -67,9 +80,9 @@ UserInputService.InputBegan:Connect(function(input)
     end
 end)
 
-print("✅ Mitamers Software Tamamen Yüklendi!")
+print("✅ Mitamers Software Yüklendi!")
 game.StarterGui:SetCore("SendNotification", {
     Title = "Mitamers Software";
-    Text = "Fly için F tuşuna bas! | Insert = Menü";
-    Duration = 6;
+    Text = "F = Fly | Insert = Menü";
+    Duration = 8;
 })
