@@ -1,4 +1,6 @@
--- // Mitamers Software - Visible Fly
+-- // Mitamers Software
+print("Mitamers Software Yükleniyor...")
+
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
@@ -8,19 +10,18 @@ local character = player.Character or player.CharacterAdded:Wait()
 local root = character:WaitForChild("HumanoidRootPart")
 local humanoid = character:WaitForChild("Humanoid")
 
--- Network Ownership (daha görünür olması için)
 root:SetNetworkOwner(nil)
 
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.ResetOnSpawn = false
-ScreenGui.Parent = player.PlayerGui
+ScreenGui.Parent = player:WaitForChild("PlayerGui")
 
 local Watermark = Instance.new("TextLabel")
 Watermark.Position = UDim2.new(0, 10, 0, 10)
-Watermark.Size = UDim2.new(0, 250, 0, 30)
+Watermark.Size = UDim2.new(0, 280, 0, 35)
 Watermark.BackgroundTransparency = 1
 Watermark.Text = "Mitamers Software"
-Watermark.TextColor3 = Color3.fromRGB(0, 255, 150)
+Watermark.TextColor3 = Color3.fromRGB(0, 255, 100)
 Watermark.TextScaled = true
 Watermark.Font = Enum.Font.GothamBold
 Watermark.Parent = ScreenGui
@@ -33,18 +34,18 @@ local function toggleFly()
     if flying then
         humanoid.PlatformStand = true
         spawn(function()
-            while flying and character and character.Parent do
-                local cam = workspace.CurrentCamera
-                local dir = Vector3.new()
+            while flying and root and root.Parent do
+                local cam = workspace.CurrentCamera.CFrame
+                local dir = Vector3.new(0,0,0)
                 
-                if UserInputService:IsKeyDown(Enum.KeyCode.W) then dir += cam.CFrame.LookVector end
-                if UserInputService:IsKeyDown(Enum.KeyCode.S) then dir -= cam.CFrame.LookVector end
-                if UserInputService:IsKeyDown(Enum.KeyCode.A) then dir -= cam.CFrame.RightVector end
-                if UserInputService:IsKeyDown(Enum.KeyCode.D) then dir += cam.CFrame.RightVector end
+                if UserInputService:IsKeyDown(Enum.KeyCode.W) then dir += cam.LookVector end
+                if UserInputService:IsKeyDown(Enum.KeyCode.S) then dir -= cam.LookVector end
+                if UserInputService:IsKeyDown(Enum.KeyCode.A) then dir -= cam.RightVector end
+                if UserInputService:IsKeyDown(Enum.KeyCode.D) then dir += cam.RightVector end
                 if UserInputService:IsKeyDown(Enum.KeyCode.Space) then dir += Vector3.new(0,1,0) end
                 if UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) then dir -= Vector3.new(0,1,0) end
                 
-                root.Velocity = dir.Unit * flySpeed
+                root.Velocity = dir * flySpeed
                 RunService.Heartbeat:Wait()
             end
         end)
@@ -66,4 +67,9 @@ UserInputService.InputBegan:Connect(function(input)
     end
 end)
 
-print("Mitamers Software - Visible Fly Aktif | F = Fly | Insert = Menü")
+print("✅ Mitamers Software Tamamen Yüklendi!")
+game.StarterGui:SetCore("SendNotification", {
+    Title = "Mitamers Software";
+    Text = "Fly için F tuşuna bas! | Insert = Menü";
+    Duration = 6;
+})
